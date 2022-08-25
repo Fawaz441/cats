@@ -12,6 +12,7 @@ import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {getAllCats, getBreeds} from './src/api/catAxios';
 import {COLORS} from './src/assets/styles';
 import Cat from './src/components/Cat';
+import DropdownItem from './src/components/DropdownItem';
 
 const {width} = Dimensions.get('window');
 
@@ -58,6 +59,9 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     color: 'rgba(255,255,255,0.4)',
+  },
+  containerStyle: {
+    backgroundColor: COLORS.black,
   },
 });
 
@@ -200,9 +204,13 @@ const App = () => {
                   selectedTextStyle={styles.selectedTextStyle}
                   placeholder={'Select a breed'}
                   placeholderStyle={styles.placeholderStyle}
+                  containerStyle={styles.containerStyle}
                   onChange={item => {
                     setSelectedBreed(item.value);
                   }}
+                  renderItem={(item, selected) => (
+                    <DropdownItem {...{item, selected}} />
+                  )}
                 />
               </View>
             </View>
