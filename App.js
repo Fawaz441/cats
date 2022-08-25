@@ -56,6 +56,9 @@ const styles = StyleSheet.create({
   selectedTextStyle: {
     color: COLORS.white,
   },
+  placeholderStyle: {
+    color: 'rgba(255,255,255,0.4)',
+  },
 });
 
 const App = () => {
@@ -73,8 +76,53 @@ const App = () => {
     value: breed.id,
   }));
 
+  const resetState = () => {
+    setPage(0);
+    setLoadingMore(false);
+    setHasMore(true);
+    setCats([]);
+  };
+
+  const getSpecificBreed = async (breed, isInitial = false) => {
+    if (!isInitial) {
+      setLoadingMore(true);
+    }
+    try {
+      const {data} = await getAllCats(
+        isInitial ? 0 : page,
+        10,
+        selectedBreed || breed,
+      );
+      setPage(page => page + 1);
+      setHasMore(data.length > 0);
+      if (isInitial) {
+        setCats(data);
+      } else {
+        setCats([...cats, ...data]);
+        setLoadingMore(false);
+      }
+    } catch (e) {
+      setLoadingMore(false);
+      Alert.alert(
+        'Meow!',
+        'There was an error while trying to load this breed.',
+        [
+          {
+            text: 'Retry',
+            onPress: () => getSpecificBreed(selectedBreed || breed, isInitial),
+          },
+          {text: 'Close', onPress: () => {}},
+        ],
+      );
+    }
+  };
+
   const getCats = async () => {
     if (loadingMore || !hasMore) return;
+    if (selectedBreed) {
+      getSpecificBreed(selectedBreed);
+      return;
+    }
     try {
       if (initialFetchDone) {
         setLoadingMore(true);
@@ -83,13 +131,13 @@ const App = () => {
       if (initialFetchDone) {
         setLoadingMore(false);
         setCats([...cats, ...data]);
-        setPage(page => page + 1);
         setHasMore(data.length > 0);
       } else {
         setLoading(false);
         setCats(data);
         setinitialFetchDone(true);
       }
+      setPage(page => page + 1);
     } catch (e) {
       console.log(e);
       setLoading(false);
@@ -123,6 +171,13 @@ const App = () => {
     getCats();
   }, []);
 
+  useEffect(() => {
+    if (selectedBreed) {
+      resetState();
+      getSpecificBreed(selectedBreed, true);
+    }
+  }, [selectedBreed]);
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.wrapper} edges={['left', 'right', 'top']}>
@@ -143,6 +198,8 @@ const App = () => {
                   valueField="value"
                   value={selectedBreed}
                   selectedTextStyle={styles.selectedTextStyle}
+                  placeholder={'Select a breed'}
+                  placeholderStyle={styles.placeholderStyle}
                   onChange={item => {
                     setSelectedBreed(item.value);
                   }}
@@ -151,10 +208,10 @@ const App = () => {
             </View>
             <FlatList
               data={cats}
-              keyExtractor={cat => cat.id}
+              keyExtractor={(cat, index) => `${cat.id}-${index}`}
               showsVerticalScrollIndicator={false}
               renderItem={({item}) => <Cat image={item.url} />}
-              onEndReached={getCats}
+              onEndReached={() => getCats()}
               ListFooterComponent={() => (
                 <View style={styles.loadingMore}>
                   {loadingMore && (

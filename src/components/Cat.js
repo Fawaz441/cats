@@ -1,8 +1,6 @@
 import React from 'react';
-import {StyleSheet, Image} from 'react-native';
+import {StyleSheet, Image, View} from 'react-native';
 import Lightbox from 'react-native-lightbox-v2';
-
-const defaultImage = require('../assets/images/cats.png');
 
 const styles = StyleSheet.create({
   image: {
@@ -11,17 +9,17 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 20,
   },
+  wrapper: {
+    backgroundColor: 'rgba(255,255,255,0.4)',
+  },
 });
 
 const Cat = ({image}) => {
   return (
     <Lightbox>
-      <Image
-        source={{uri: image}}
-        resizeMode="cover"
-        style={styles.image}
-        defaultSource={defaultImage}
-      />
+      <View style={[styles.image, styles.wrapper]}>
+        <Image source={{uri: image}} resizeMode="cover" style={styles.image} />
+      </View>
     </Lightbox>
   );
 };

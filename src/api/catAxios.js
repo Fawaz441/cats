@@ -6,8 +6,9 @@ const catAxios = axios.create({
   headers: {'x-api-key': KEY},
 });
 
-export const getAllCats = (page = 0, limit = 10) =>
-  catAxios.get('/v1/images/search', {params: {limit, page}});
+export const getAllCats = (page = 0, limit = 10, breed_id) => {
+  return catAxios.get('/v1/images/search', {params: {limit, page, breed_id}});
+};
 
 export const getBreeds = () => catAxios.get('/v1/breeds');
 
