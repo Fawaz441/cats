@@ -7,6 +7,6 @@ const catAxios = axios.create({
 });
 
 export const getAllCats = (page = 0, limit = 10) =>
-  catAxios.get('/images/search', {params: {limit, page}});
+  catAxios.get('/v1/images/search', {params: {limit, page}});
 
 export default catAxios;
