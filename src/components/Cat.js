@@ -2,6 +2,8 @@ import React from 'react';
 import {StyleSheet, Image} from 'react-native';
 import Lightbox from 'react-native-lightbox-v2';
 
+const defaultImage = require('../assets/images/cats.png');
+
 const styles = StyleSheet.create({
   image: {
     height: 300,
@@ -14,7 +16,12 @@ const styles = StyleSheet.create({
 const Cat = ({image}) => {
   return (
     <Lightbox>
-      <Image source={{uri: image}} resizeMode="cover" style={styles.image} />
+      <Image
+        source={{uri: image}}
+        resizeMode="cover"
+        style={styles.image}
+        defaultSource={defaultImage}
+      />
     </Lightbox>
   );
 };
